@@ -1,0 +1,57 @@
+1. create cluster from Aws console and attach eks cluster role with permissions 
+
+2. to check cluster is Active or not? :
+#aws eks --region us-east-2 describe-cluster --name <cluster_name> --query cluster.status
+
+3. to make connection with the api server of the master node using kubectl
+#aws eks --region us-east-2 update-kubeconfig --name <cluster_name>
+
+after this you can see that kubeconfig file gets created 
+
+4. to check the network connected to master node or not?
+#kubectl get svc
+
+5. Now create worker nodes from compute tab and there are 1 role is needed with cni permission, workernode policy and ecr read/write permission and ec2containerregistryreadonly
+
+6. after creating worker nodes u can see from cli that
+#kubectl get nodes -watch 
+
+now you can see that your nodes are gets created
+
+
+
+________________________________________________________________________________________________________________________________________________________________________________________
+
+output:
+
+akshay@akshay-HP-Laptop:~$ aws eks --region ap-south-1 describe-cluster --name 2048_game_cluster --query cluster.status
+"ACTIVE"
+akshay@akshay-HP-Laptop:~$ aws eks --region ap-south-1 update-kubeconfig --name 2024_game_cluster
+
+An error occurred (ResourceNotFoundException) when calling the DescribeCluster operation: No cluster found for name: 2024_game_cluster.
+akshay@akshay-HP-Laptop:~$ aws eks --region ap-south-1 update-kubeconfig --name 2048_game_cluster
+Added new context arn:aws:eks:ap-south-1:097921769063:cluster/2048_game_cluster to /home/akshay/.kube/config
+
+
+45
+
+We HAVE a fix here: https://github.com/aws/aws-cli/issues/6920#issuecomment-1119926885
+
+Update the aws-cli (aws cli v1) to the version with the fix:
+
+_________________________________________________________________________________________________________________________________________________________________________________________________
+
+if you see below error
+
+akshay@akshay-HP-Laptop:~$ kubectl version
+error: exec plugin: invalid apiVersion "client.authentication.k8s.io/v1alpha1"
+
+solution:
+upgrade the aws cli
+
+pip3 install awscli --upgrade --user
+For aws cli v2 see this.
+After that, don't forget to rewrite the kube-config with:
+
+aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${REGION}
+

@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: 2048-app-deployment
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: 2048-app
+  template:
+    metadata:
+      labels:
+        app: 2048-app
+    spec:
+      containers:
+      - name: 2048-app-container
+        image: blackicebird/2048:latest
+        ports:
+        - containerPort: 80
