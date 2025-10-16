@@ -1,0 +1,58 @@
+pipeline {
+    agent { label 'jenkins-slave' }
+    environment {
+        age = '28'    
+        name = 'Akshay'
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Running build on Jenkins slave node...'
+            }
+        }
+        
+         stage('Test') {
+            steps {
+                echo 'Running test phase on Jenkins slave node...'
+            }
+        }
+        
+         stage('continue ?') {
+            steps {
+              input message: "should we continue ?", ok: "yes we should !"
+            
+            }
+         } 
+       
+        
+        stage('Run commands') {
+         steps {
+           script { def post = sh(script: 'date +%Y%m%d_%H%M%S', returnStdout: true).trim()
+            sh """
+                echo "Timestamp is ${post}"
+                rm -rf *
+                touch 1_${post}
+                ls -lrth
+                cal 2025
+                touch ${name}
+                echo ${age}
+            """
+           }
+        }
+      }
+    }
+    
+    post
+        {
+        always {
+            echo "run Always"
+        }
+        failure {
+            echo "runs when fail"
+        }
+        success {
+            echo "runs when success"
+        }
+    }
+}
